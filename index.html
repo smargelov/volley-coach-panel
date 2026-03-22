@@ -171,6 +171,210 @@
       ctx.fillText('1', courtX + colW * 2.5, botRowY);
     }
 
+    // --- Toolbar icon drawing functions ---
+
+    function drawMoveIcon(x, y, size) {
+      const cx = x + size / 2;
+      const cy = y + size / 2;
+      const arm = size * 0.38;
+      const head = size * 0.12;
+
+      ctx.strokeStyle = '#333';
+      ctx.fillStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+
+      // Cross lines
+      ctx.beginPath();
+      ctx.moveTo(cx - arm, cy); ctx.lineTo(cx + arm, cy);
+      ctx.moveTo(cx, cy - arm); ctx.lineTo(cx, cy + arm);
+      ctx.stroke();
+
+      // Arrow heads — right
+      ctx.beginPath();
+      ctx.moveTo(cx + arm, cy);
+      ctx.lineTo(cx + arm - head, cy - head);
+      ctx.lineTo(cx + arm - head, cy + head);
+      ctx.closePath(); ctx.fill();
+      // left
+      ctx.beginPath();
+      ctx.moveTo(cx - arm, cy);
+      ctx.lineTo(cx - arm + head, cy - head);
+      ctx.lineTo(cx - arm + head, cy + head);
+      ctx.closePath(); ctx.fill();
+      // up
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - arm);
+      ctx.lineTo(cx - head, cy - arm + head);
+      ctx.lineTo(cx + head, cy - arm + head);
+      ctx.closePath(); ctx.fill();
+      // down
+      ctx.beginPath();
+      ctx.moveTo(cx, cy + arm);
+      ctx.lineTo(cx - head, cy + arm - head);
+      ctx.lineTo(cx + head, cy + arm - head);
+      ctx.closePath(); ctx.fill();
+    }
+
+    function drawDrawIcon(x, y, size) {
+      ctx.strokeStyle = '#333';
+      ctx.fillStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      const px = x + size * 0.2;
+      const py = y + size * 0.8;
+      const tx = x + size * 0.8;
+      const ty = y + size * 0.2;
+
+      // Pencil body
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(tx, ty);
+      ctx.stroke();
+
+      // Pencil tip
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(px + size * 0.08, py - size * 0.12);
+      ctx.lineTo(px + size * 0.12, py - size * 0.08);
+      ctx.closePath();
+      ctx.fill();
+
+      // Pencil top
+      ctx.beginPath();
+      ctx.moveTo(tx - size * 0.06, ty + size * 0.1);
+      ctx.lineTo(tx, ty);
+      ctx.lineTo(tx + size * 0.04, ty + size * 0.1);
+      ctx.stroke();
+    }
+
+    function drawArrowIcon(x, y, size) {
+      ctx.strokeStyle = '#333';
+      ctx.fillStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+
+      const cy = y + size / 2;
+      const left = x + size * 0.18;
+      const right = x + size * 0.82;
+      const head = size * 0.2;
+
+      // Shaft
+      ctx.beginPath();
+      ctx.moveTo(right, cy);
+      ctx.lineTo(left, cy);
+      ctx.stroke();
+
+      // Arrow head pointing left
+      ctx.beginPath();
+      ctx.moveTo(left, cy);
+      ctx.lineTo(left + head, cy - head);
+      ctx.lineTo(left + head, cy + head);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawAreaIcon(x, y, size) {
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 1.8;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      const pad = size * 0.15;
+      const rectW = size * 0.55;
+      const rectH = size * 0.45;
+
+      // Back rect
+      ctx.strokeRect(x + pad + size * 0.15, y + pad, rectW, rectH);
+      // Front rect (overlapping)
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.fillRect(x + pad, y + pad + size * 0.2, rectW, rectH);
+      ctx.strokeStyle = '#333';
+      ctx.strokeRect(x + pad, y + pad + size * 0.2, rectW, rectH);
+    }
+
+    function drawClearIcon(x, y, size) {
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      const cx = x + size / 2;
+      const cy = y + size / 2;
+      const r = size * 0.32;
+
+      // Diamond / eraser shape
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - r);
+      ctx.lineTo(cx + r, cy);
+      ctx.lineTo(cx, cy + r);
+      ctx.lineTo(cx - r, cy);
+      ctx.closePath();
+      ctx.stroke();
+
+      // X inside
+      const inner = r * 0.45;
+      ctx.beginPath();
+      ctx.moveTo(cx - inner, cy - inner);
+      ctx.lineTo(cx + inner, cy + inner);
+      ctx.moveTo(cx + inner, cy - inner);
+      ctx.lineTo(cx - inner, cy + inner);
+      ctx.stroke();
+    }
+
+    // --- Toolbar ---
+
+    function drawToolbar() {
+      const tbW = 60;
+      const tbH = 280;
+      const tbX = canvas.width - 30 - tbW;
+      const tbY = (canvas.height - tbH) / 2;
+      const borderRadius = 25;
+
+      state.toolbarBounds = { x: tbX, y: tbY, w: tbW, h: tbH };
+
+      // White rounded rect
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.roundRect(tbX, tbY, tbW, tbH, borderRadius);
+      ctx.fill();
+
+      // Buttons
+      const tools = ['move', 'draw', 'arrow', 'area', 'clear'];
+      const btnSize = 40;
+      const totalBtnH = tools.length * btnSize;
+      const gap = (tbH - totalBtnH) / (tools.length + 1);
+
+      const iconDrawers = {
+        move: drawMoveIcon,
+        draw: drawDrawIcon,
+        arrow: drawArrowIcon,
+        area: drawAreaIcon,
+        clear: drawClearIcon,
+      };
+
+      state.toolButtons = [];
+
+      tools.forEach((tool, i) => {
+        const bx = tbX + (tbW - btnSize) / 2;
+        const by = tbY + gap + i * (btnSize + gap);
+
+        state.toolButtons.push({ tool, x: bx, y: by, w: btnSize, h: btnSize });
+
+        // Active highlight
+        if (state.tool === tool) {
+          ctx.fillStyle = 'rgba(0,0,0,0.1)';
+          ctx.beginPath();
+          ctx.roundRect(bx, by, btnSize, btnSize, 8);
+          ctx.fill();
+        }
+
+        iconDrawers[tool](bx, by, btnSize);
+      });
+    }
+
     function renderAll() {
       // Clear and fill background
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -181,6 +385,7 @@
       initPlayers();
       drawPlayers();
       drawBall();
+      drawToolbar();
     }
 
     window.addEventListener('resize', resize);
