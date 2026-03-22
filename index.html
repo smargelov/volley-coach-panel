@@ -55,8 +55,8 @@
       state.players = [
         { label: 'MB1', x: colX1, y: row1Y, radius: r, color: '#2A57D4', textColor: '#FFFFFF' },
         { label: 'MB2', x: colX1, y: row2Y, radius: r, color: '#2A57D4', textColor: '#FFFFFF' },
-        { label: 'OH1', x: colX1, y: row3Y, radius: r, color: '#AF2AD4', textColor: '#FFFFFF' },
-        { label: 'OH2', x: colX1, y: row4Y, radius: r, color: '#AF2AD4', textColor: '#FFFFFF' },
+        { label: 'OH1', x: colX1, y: row3Y, radius: r, color: '#FF6B2B', textColor: '#FFFFFF' },
+        { label: 'OH2', x: colX1, y: row4Y, radius: r, color: '#FF6B2B', textColor: '#FFFFFF' },
         { label: 'OP',  x: colX2, y: row3Y, radius: r, color: '#2AD443', textColor: '#FFFFFF' },
         { label: 'S',   x: colX2, y: row4Y, radius: r, color: '#001A00', textColor: '#FFFFFF' },
         { label: 'L',   x: colX1 + (colX2 - colX1) / 2, y: lY, radius: r, color: '#FFFFFF', textColor: '#000A00' },
@@ -616,15 +616,13 @@
     // --- Clear all drawings/arrows/areas ---
 
     function clearAll() {
-      if (confirm('Clear all drawings, arrows, and areas?')) {
-        state.drawings = [];
-        state.arrows = [];
-        state.areas = [];
-        state.currentDrawing = null;
-        state.currentArrow = null;
-        state.currentArea = null;
-        renderAll();
-      }
+      state.drawings = [];
+      state.arrows = [];
+      state.areas = [];
+      state.currentDrawing = null;
+      state.currentArrow = null;
+      state.currentArea = null;
+      renderAll();
     }
 
     // --- Mouse event handlers ---
