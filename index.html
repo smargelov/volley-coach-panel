@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volleyball Coach Panel</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; background: #B0FA9F; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const state = {
+      tool: 'move',
+      players: [],
+      ball: null,
+      drawings: [],
+      arrows: [],
+      areas: [],
+      court: null,
+      dragging: null,
+    };
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      renderAll();
+    }
+
+    function drawCourt() {
+      const courtW = canvas.width * 0.5;
+      const courtH = canvas.height * 0.85;
+      const courtX = (canvas.width - courtW) / 2;
+      const courtY = (canvas.height - courtH) / 2;
+
+      state.court = { x: courtX, y: courtY, w: courtW, h: courtH };
+
+      // Full court — yellow
+      ctx.fillStyle = '#F6FE5C';
+      ctx.fillRect(courtX, courtY, courtW, courtH);
+
+      // Opponent's side (top half) — darker yellow
+      ctx.fillStyle = '#B4BC22';
+      ctx.fillRect(courtX, courtY, courtW, courtH / 2);
+
+      // Top end line — dark green
+      const lineThickness = 3;
+      ctx.fillStyle = '#003400';
+      ctx.fillRect(courtX, courtY, courtW, lineThickness);
+
+      // Net line — blue, middle of court
+      ctx.fillStyle = '#2A57D4';
+      ctx.fillRect(courtX, courtY + courtH / 2 - lineThickness / 2, courtW, lineThickness);
+
+      // Zone numbers
+      const halfH = courtH / 2;
+      const colW = courtW / 3;
+
+      ctx.font = `bold ${Math.round(courtH * 0.12)}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+
+      // Top row (opponent side): 4, 3, 2
+      const topRowY = courtY + halfH * 0.5;
+      ctx.fillText('4', courtX + colW * 0.5, topRowY);
+      ctx.fillText('3', courtX + colW * 1.5, topRowY);
+      ctx.fillText('2', courtX + colW * 2.5, topRowY);
+
+      // Bottom row (our side): 5, 6, 1
+      const botRowY = courtY + halfH + halfH * 0.5;
+      ctx.fillText('5', courtX + colW * 0.5, botRowY);
+      ctx.fillText('6', courtX + colW * 1.5, botRowY);
+      ctx.fillText('1', courtX + colW * 2.5, botRowY);
+    }
+
+    function renderAll() {
+      // Clear and fill background
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#B0FA9F';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      drawCourt();
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+  </script>
+</body>
+</html>
