@@ -25,7 +25,98 @@
       areas: [],
       court: null,
       dragging: null,
+      playersInitialized: false,
     };
+
+    function initPlayers() {
+      if (state.playersInitialized) return;
+      state.playersInitialized = true;
+
+      const court = state.court;
+      const r = 40;
+      const gap = 10;
+      const colX1 = court.x - r * 2 - gap - r * 2 - gap;
+      const colX2 = colX1 + r * 2 + gap;
+      const startY = court.y + r;
+
+      // Ball — above MB1
+      state.ball = {
+        x: colX1,
+        y: startY,
+        radius: 20,
+      };
+
+      const row1Y = startY + 20 + gap + r; // MB1
+      const row2Y = row1Y + r * 2 + gap;    // MB2
+      const row3Y = row2Y + r * 2 + gap;    // OH1, OP
+      const row4Y = row3Y + r * 2 + gap;    // OH2, S
+      const lY = row4Y + r * 2 + gap + r;   // L centered below
+
+      state.players = [
+        { label: 'MB1', x: colX1, y: row1Y, radius: r, color: '#2A57D4', textColor: '#FFFFFF' },
+        { label: 'MB2', x: colX1, y: row2Y, radius: r, color: '#2A57D4', textColor: '#FFFFFF' },
+        { label: 'OH1', x: colX1, y: row3Y, radius: r, color: '#AF2AD4', textColor: '#FFFFFF' },
+        { label: 'OH2', x: colX1, y: row4Y, radius: r, color: '#AF2AD4', textColor: '#FFFFFF' },
+        { label: 'OP',  x: colX2, y: row3Y, radius: r, color: '#2AD443', textColor: '#FFFFFF' },
+        { label: 'S',   x: colX2, y: row4Y, radius: r, color: '#001A00', textColor: '#FFFFFF' },
+        { label: 'L',   x: colX1 + (colX2 - colX1) / 2, y: lY, radius: r, color: '#FFFFFF', textColor: '#000A00' },
+      ];
+    }
+
+    function drawPlayers() {
+      state.players.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = p.textColor;
+        ctx.font = `bold ${Math.round(p.radius * 0.7)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.label, p.x, p.y);
+      });
+    }
+
+    function drawBall() {
+      const b = state.ball;
+      if (!b) return;
+      const r = b.radius;
+
+      // White circle with blue stroke
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fill();
+      ctx.strokeStyle = '#162DDA';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Volleyball curved lines
+      ctx.strokeStyle = '#162DDA';
+      ctx.lineWidth = 1.5;
+
+      // Horizontal curve
+      ctx.beginPath();
+      ctx.moveTo(b.x - r, b.y);
+      ctx.quadraticCurveTo(b.x, b.y - r * 0.35, b.x + r, b.y);
+      ctx.stroke();
+
+      // Left curve
+      ctx.beginPath();
+      ctx.moveTo(b.x, b.y - r);
+      ctx.quadraticCurveTo(b.x - r * 0.35, b.y, b.x, b.y + r);
+      ctx.stroke();
+
+      // Right curve
+      ctx.beginPath();
+      ctx.moveTo(b.x, b.y - r);
+      ctx.quadraticCurveTo(b.x + r * 0.35, b.y, b.x, b.y + r);
+      ctx.stroke();
+    }
 
     function resize() {
       canvas.width = window.innerWidth;
@@ -87,6 +178,9 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       drawCourt();
+      initPlayers();
+      drawPlayers();
+      drawBall();
     }
 
     window.addEventListener('resize', resize);
